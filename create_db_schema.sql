@@ -1,145 +1,168 @@
+-- TODO: 1:1 sollen unique id haben
+
 CREATE TABLE land
 (
-    id      NUMBER PRIMARY KEY, -- alle prim keys als constraint
+    id       NUMBER,
     name     VARCHAR2(255) NOT NULL,
-    iso_code VARCHAR2(2)   NOT NULL
+    iso_code VARCHAR2(2)   NOT NULL,
+    CONSTRAINT pk_land PRIMARY KEY (id)
 );
 
 CREATE TABLE ort
 (
-    id                    NUMBER PRIMARY KEY,
+    id                     NUMBER,
     land_id                NUMBER NOT NULL,
     naechsten_flughafen_id NUMBER NOT NULL,
-    CONSTRAINT fk_org_land FOREIGN KEY (land_id) REFERENCES land (id)
+    CONSTRAINT fk_org_land FOREIGN KEY (land_id) REFERENCES land (id),
+    CONSTRAINT pk_ort PRIMARY KEY (id)
 );
 
 CREATE TABLE adresse
 (
-    id        NUMBER PRIMARY KEY,
+    id         NUMBER,
     strasse    VARCHAR2(255) NOT NULL,
     hausnummer VARCHAR2(10)  NOT NULL,
     plz        VARCHAR2(10)  NOT NULL,
     ort_id     NUMBER        NOT NULL,
-    CONSTRAINT fk_adresse_ort FOREIGN KEY (ort_id) REFERENCES ort (id)
+    CONSTRAINT fk_adresse_ort FOREIGN KEY (ort_id) REFERENCES ort (id),
+    CONSTRAINT pk_addresse PRIMARY KEY (id)
 );
 
 CREATE TABLE flughafen
 (
-    id        NUMBER PRIMARY KEY,
+    id         NUMBER,
     name       VARCHAR2(255) NOT NULL,
     adresse_id NUMBER        NOT NULL,
-    CONSTRAINT fk_flughaefen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id)
+    CONSTRAINT fk_flughaefen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id),
+    CONSTRAINT pk_flughafen PRIMARY KEY (id)
 );
 
--- droppen
-ALTER TABLE ort ADD CONSTRAINT fk_org_flughafen FOREIGN KEY (naechsten_flughafen_id) REFERENCES flughafen (id);
+ALTER TABLE ort
+    ADD CONSTRAINT fk_org_flughafen FOREIGN KEY (naechsten_flughafen_id) REFERENCES flughafen (id);
 
-CREATE TABLE kunden
+CREATE TABLE kunde
 (
-    id           NUMBER PRIMARY KEY,
+    id            NUMBER,
     name          VARCHAR2(255) NOT NULL,
     vorname       VARCHAR2(255) NOT NULL,
     geburtsdatum  DATE          NOT NULL,
     adresse_id    NUMBER        NOT NULL,
     telefonnummer VARCHAR2(20)  NOT NULL,
     email         VARCHAR2(255) NOT NULL UNIQUE,
-    CONSTRAINT fk_kunden_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id)
+    CONSTRAINT fk_kunden_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id),
+    CONSTRAINT pk_kunde PRIMARY KEY (id)
 );
 
 CREATE TABLE bankverbindung
 (
-    id          NUMBER PRIMARY KEY,
+    id          NUMBER,
     blz         VARCHAR2(8)  NOT NULL,
     kontonummer VARCHAR2(10) NOT NULL,
-    iban        VARCHAR2(34) NOT NULL, -- uniqyue
+    iban        VARCHAR2(34) NOT NULL UNIQUE,
     bic         VARCHAR2(11) NOT NULL,
     kunde_id    NUMBER       NOT NULL,
-    CONSTRAINT fk_bankverbindungen_kunden FOREIGN KEY (kunde_id) REFERENCES kunden (id)
+    CONSTRAINT fk_bankverbindungen_kunden FOREIGN KEY (kunde_id) REFERENCES kunde (id),
+    CONSTRAINT pk_bankverbindung PRIMARY KEY (id)
 );
 
 CREATE TABLE ferienwohnung
 (
-    id            NUMBER PRIMARY KEY,
+    id            NUMBER,
     beschreibung  VARCHAR2(1000) NOT NULL,
     adresse_id    NUMBER         NOT NULL,
     zimmeranzahl  NUMBER         NOT NULL,
-    groesse_qm    NUMBER         NOT NULL, -- check > 0
+    groesse_qm    NUMBER         NOT NULL,
     preis_pro_tag NUMBER         NOT NULL,
-    CONSTRAINT fk_ferienwohnungen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id)
+    CONSTRAINT fk_ferienwohnungen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id),
+    CONSTRAINT pk_ferienwohnung PRIMARY KEY (id),
+    CONSTRAINT check_groesse_qm CHECK ( groesse_qm > 0 ),
+    CONSTRAINT check_preis_pro_tag CHECK ( preis_pro_tag > 0 ),
+    CONSTRAINT check_zimmeranzahl CHECK ( zimmeranzahl > 0 )
 );
 
 CREATE TABLE zusatzausstattung
 (
-    id               NUMBER PRIMARY KEY,
+    id               NUMBER,
     ferienwohnung_id NUMBER        NOT NULL,
     ausstattung      VARCHAR2(255) NOT NULL,
-    CONSTRAINT fk_zusatzausstattungen_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id)
+    CONSTRAINT fk_zusatzausstattungen_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id),
+    CONSTRAINT pk_zusatzausstattung PRIMARY KEY (id)
 );
 
-CREATE TABLE bilder
+CREATE TABLE bild
 (
-    id               NUMBER PRIMARY KEY,
+    id               NUMBER,
     ferienwohnung_id NUMBER        NOT NULL,
     bildbeschreibung VARCHAR2(255),
     dateipfad        VARCHAR2(255) NOT NULL,
-    CONSTRAINT fk_bilder_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id)
+    CONSTRAINT fk_bilder_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id),
+    CONSTRAINT pk_bild PRIMARY KEY (id)
 );
 
 CREATE TABLE touristenattraktion
 (
-    id           NUMBER PRIMARY KEY,
+    id           NUMBER,
     name         VARCHAR2(255) NOT NULL,
     beschreibung VARCHAR2(1000),
     adresse_id   NUMBER        NOT NULL,
-    CONSTRAINT fk_touristenattraktionen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id)
+    CONSTRAINT fk_touristenattraktionen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id),
+    CONSTRAINT pk_touristenattraktion PRIMARY KEY (id)
 );
 
 CREATE TABLE belegung
 (
-    id               NUMBER PRIMARY KEY,
+    id               NUMBER,
     kunde_id         NUMBER NOT NULL,
     ferienwohnung_id NUMBER NOT NULL,
-    status_flag      VARCHAR2(10) CHECK (status_flag IN ('reserviert', 'gebucht')), -- named constraint
-    startdatum       DATE   NOT NULL, -- check enddatem > startsdatum
+    status_flag      VARCHAR2(10),
+    startdatum       DATE   NOT NULL,
     enddatum         DATE   NOT NULL,
-    CONSTRAINT fk_belegungen_kunden FOREIGN KEY (kunde_id) REFERENCES kunden (id),
-    CONSTRAINT fk_belegungen_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id)
+    CONSTRAINT pk_belungen PRIMARY KEY (id),
+    CONSTRAINT fk_belegungen_kunden FOREIGN KEY (kunde_id) REFERENCES kunde (id),
+    CONSTRAINT fk_belegungen_ferienwohnungen FOREIGN KEY (ferienwohnung_id) REFERENCES ferienwohnung (id),
+    CONSTRAINT check_status_flash CHECK ( status_flag IN ('reserviert', 'gebucht')),
+    CONSTRAINT check_start_grater_end CHECK (startdatum > belegung.enddatum)
 );
 
 CREATE TABLE rechnung
 (
-    id                    NUMBER PRIMARY KEY,
+    id                    NUMBER,
     betrag                NUMBER NOT NULL,
     buchungsnummer        NUMBER NOT NULL,
     rechnungsdatum        DATE   NOT NULL,
     zahlungseingangsdatum DATE,
     belegung_id           NUMBER NOT NULL UNIQUE,
-    CONSTRAINT fk_rechnungen_belegungen FOREIGN KEY (belegung_id) REFERENCES belegung (id)
+    CONSTRAINT fk_rechnungen_belegungen FOREIGN KEY (belegung_id) REFERENCES belegung (id),
+    CONSTRAINT pk_rechnung PRIMARY KEY (id),
+    CONSTRAINT check_betrag CHECK ( betrag > 0 )
 );
 
 CREATE TABLE ortsentfernung
 (
-    id            NUMBER PRIMARY KEY, -- start und end is primary key
-    starting         NUMBER NOT NULL,
+    starting      NUMBER NOT NULL,
     ende          NUMBER NOT NULL,
-    entfernung_km NUMBER NOT NULL, -- check
+    entfernung_km NUMBER NOT NULL,
     CONSTRAINT fk_start_ort FOREIGN KEY (starting) REFERENCES ort (id),
-    CONSTRAINT fk_ende_ort FOREIGN KEY (ende) REFERENCES ort (id)
+    CONSTRAINT fk_ende_ort FOREIGN KEY (ende) REFERENCES ort (id),
+    CONSTRAINT pk_ortsentfernung PRIMARY KEY (starting, ende),
+    CONSTRAINT check_entfernung_km CHECK ( entfernung_km > 0 )
 );
 
 CREATE TABLE fluggesellschaften
 (
-    id               NUMBER PRIMARY KEY,
+    id               NUMBER,
     name             VARCHAR2(255) NOT NULL,
-    servicequalitaet NUMBER CHECK (servicequalitaet BETWEEN 1 AND 10) -- named constraint
+    servicequalitaet NUMBER,
+    CONSTRAINT pk_fluggesellschaften PRIMARY KEY (id),
+    CONSTRAINT check_servicequaliteat CHECK (servicequalitaet BETWEEN 1 AND 10)
 );
 
-CREATE TABLE flugstrecken
+CREATE TABLE flugstrecke
 (
-    id                  NUMBER PRIMARY KEY, -- keine id start und ziel ist prim key
     start_flughafen_id  NUMBER NOT NULL,
     ziel_flughafen_id   NUMBER NOT NULL,
     fluggesellschaft_id NUMBER NOT NULL,
+    CONSTRAINT pk_flugstrecke PRIMARY KEY (start_flughafen_id, ziel_flughafen_id),
     CONSTRAINT fk_flugstrecken_start_flughafen FOREIGN KEY (start_flughafen_id) REFERENCES flughafen (id),
     CONSTRAINT fk_flugstrecken_ziel_flughafen FOREIGN KEY (ziel_flughafen_id) REFERENCES flughafen (id),
     CONSTRAINT fk_flugstrecken_fluggesellschaft FOREIGN KEY (fluggesellschaft_id) REFERENCES fluggesellschaften (id)
