@@ -1,0 +1,16 @@
+alter table ORT drop constraint FK_ORG_FLUGHAFEN;
+drop table BANKVERBINDUNG;
+drop table ZUSATZAUSSTATTUNG;
+drop table BILDER;
+drop table TOURISTENATTRAKTION;
+drop table RECHNUNG;
+drop table BELEGUNG;
+drop table KUNDEN;
+drop table FERIENWOHNUNG;
+drop table ORTSENTFERNUNG;
+drop table FLUGSTRECKEN;
+drop table FLUGHAFEN;
+drop table ADRESSE;
+drop table ORT;
+drop table LAND;
+drop table FLUGGESELLSCHAFTEN;
