@@ -12,10 +12,12 @@ CREATE TABLE land
 
 CREATE TABLE ort
 (
-    ort_id                     NUMBER,
-    land_id                VARCHAR2(2) NOT NULL,
-    naechsten_flughafen_id NUMBER      NOT NULL,
-    CONSTRAINT fk_org_land FOREIGN KEY (land_id) REFERENCES land (iso_code),
+    ort_id                  NUMBER,
+	ortsname				VARCHAR2(255) NOT NULL,
+    iso_code                	VARCHAR2(2) NOT NULL,
+    naechsten_flughafen 	VARCHAR2(255),
+	CONSTRAINT fk_org_flughafen FOREIGN KEY (naechsten_flughafen) REFERENCES flughafen (name),
+    CONSTRAINT fk_org_land FOREIGN KEY (iso_code) REFERENCES land (iso_code),
     CONSTRAINT pk_ort PRIMARY KEY (ort_id)
 );
 
@@ -107,10 +109,11 @@ CREATE TABLE bild
 
 CREATE TABLE touristenattraktion
 (
-    id           NUMBER,
-    name         VARCHAR2(255) NOT NULL,
-    beschreibung VARCHAR2(1000),
-    adresse_id   NUMBER        NOT NULL,
+    id           	NUMBER,
+    name         	VARCHAR2(255) NOT NULL,
+	art				VARCHAR2(255) NOT NULL,
+    beschreibung 	VARCHAR2(1000),
+    adresse_id   	NUMBER        NOT NULL,
     CONSTRAINT fk_touristenattraktionen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (adresse_id),
     CONSTRAINT pk_touristenattraktion PRIMARY KEY (id),
     CONSTRAINT uq_touristenattraktion_adresse UNIQUE (adresse_id)
@@ -158,6 +161,18 @@ CREATE TABLE ortsentfernung
     CONSTRAINT not_eq_orte CHECK ( start_ort != ziel_ort )
 );
 
+CREATE TABLE FeWoAttrEntf
+(
+    WohungsNr     		NUMBER NOT NULL,
+    AttraktionsName     VARCHAR2(255) NOT NULL,
+    entfernung_km 		NUMBER NOT NULL,
+    CONSTRAINT fk_WohungsNr FOREIGN KEY (WohungsNr) REFERENCES ferienwohnung (wohnungsnummer),
+    CONSTRAINT fk_AttraktionsName FOREIGN KEY (AttraktionsName) REFERENCES touristenattraktion (name),
+    CONSTRAINT pk_ortsentfernung PRIMARY KEY (WohungsNr, AttraktionsName),
+    CONSTRAINT ortsentfernung_check_entfernung_km CHECK ( entfernung_km > 0 ),
+    CONSTRAINT not_eq_orte CHECK ( WohungsNr != AttraktionsName )
+);
+
 CREATE TABLE fluggesellschaften
 (
     id               NUMBER,
@@ -189,4 +204,3 @@ CREATE TABLE ferienwohnung_zusatsausstattung
 );
 
 commit;
-
