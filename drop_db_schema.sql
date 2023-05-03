@@ -1,5 +1,8 @@
 alter table ORT
-    drop constraint FK_ORG_FLUGHAFEN
+    drop constraint FK_ORT_FLUGHAFEN
+/
+
+drop table ADRESSEENTFERNUNG
 /
 
 drop table BILD
@@ -32,9 +35,6 @@ drop table FLUGGESELLSCHAFTEN
 drop table FERIENWOHNUNG_ZUSATSAUSSTATTUNG
 /
 
-drop table ZUSATZAUSSTATTUNG
-/
-
 drop table FERIENWOHNUNG
 /
 
@@ -45,5 +45,8 @@ drop table ORT
 /
 
 drop table LAND
+/
+
+drop table ZUSATZAUSSTATTUNG
 /
 
