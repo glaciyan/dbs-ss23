@@ -16,7 +16,6 @@ CREATE TABLE ort
 	ortsname				VARCHAR2(255) NOT NULL,
     iso_code                	VARCHAR2(2) NOT NULL,
     naechsten_flughafen 	VARCHAR2(255),
-	CONSTRAINT fk_org_flughafen FOREIGN KEY (naechsten_flughafen) REFERENCES flughafen (name),
     CONSTRAINT fk_org_land FOREIGN KEY (iso_code) REFERENCES land (iso_code),
     CONSTRAINT pk_ort PRIMARY KEY (ort_id)
 );
@@ -35,19 +34,17 @@ CREATE TABLE adresse
 
 CREATE TABLE flughafen
 (
-    flughafen_id         NUMBER,
     name       VARCHAR2(255) NOT NULL,
     adresse_id NUMBER        NOT NULL,
---     CONSTRAINT fk_flughaefen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (id),
     CONSTRAINT uq_flughafen_adresse UNIQUE (adresse_id),
-    CONSTRAINT pk_flughafen PRIMARY KEY (flughafen_id)
+    CONSTRAINT pk_flughafen PRIMARY KEY (name)
 );
 
 ALTER TABLE flughafen
     ADD CONSTRAINT fk_flughafen_adresse FOREIGN KEY (adresse_id) REFERENCES adresse (adresse_id);
 
 ALTER TABLE ort
-    ADD CONSTRAINT fk_org_flughafen FOREIGN KEY (naechsten_flughafen_id) REFERENCES flughafen (flughafen_id);
+    ADD CONSTRAINT fk_ort_flughafen FOREIGN KEY (naechsten_flughafen) REFERENCES flughafen (name);
 
 CREATE TABLE kunde
 (
@@ -109,13 +106,12 @@ CREATE TABLE bild
 
 CREATE TABLE touristenattraktion
 (
-    id           	NUMBER,
     name         	VARCHAR2(255) NOT NULL,
 	art				VARCHAR2(255) NOT NULL,
     beschreibung 	VARCHAR2(1000),
     adresse_id   	NUMBER        NOT NULL,
     CONSTRAINT fk_touristenattraktionen_adressen FOREIGN KEY (adresse_id) REFERENCES adresse (adresse_id),
-    CONSTRAINT pk_touristenattraktion PRIMARY KEY (id),
+    CONSTRAINT pk_touristenattraktion PRIMARY KEY (name),
     CONSTRAINT uq_touristenattraktion_adresse UNIQUE (adresse_id)
 );
 
@@ -161,18 +157,6 @@ CREATE TABLE ortsentfernung
     CONSTRAINT not_eq_orte CHECK ( start_ort != ziel_ort )
 );
 
-CREATE TABLE FeWoAttrEntf
-(
-    WohungsNr     		NUMBER NOT NULL,
-    AttraktionsName     VARCHAR2(255) NOT NULL,
-    entfernung_km 		NUMBER NOT NULL,
-    CONSTRAINT fk_WohungsNr FOREIGN KEY (WohungsNr) REFERENCES ferienwohnung (wohnungsnummer),
-    CONSTRAINT fk_AttraktionsName FOREIGN KEY (AttraktionsName) REFERENCES touristenattraktion (name),
-    CONSTRAINT pk_ortsentfernung PRIMARY KEY (WohungsNr, AttraktionsName),
-    CONSTRAINT ortsentfernung_check_entfernung_km CHECK ( entfernung_km > 0 ),
-    CONSTRAINT not_eq_orte CHECK ( WohungsNr != AttraktionsName )
-);
-
 CREATE TABLE fluggesellschaften
 (
     id               NUMBER,
@@ -184,14 +168,14 @@ CREATE TABLE fluggesellschaften
 
 CREATE TABLE flugstrecke
 (
-    start_flughafen_id  NUMBER NOT NULL,
-    ziel_flughafen_id   NUMBER NOT NULL,
+    start_flughafen_name  VARCHAR2(255) NOT NULL,
+    ziel_flughafen_name   VARCHAR2(255) NOT NULL,
     fluggesellschaft_id NUMBER NOT NULL,
-    CONSTRAINT pk_flugstrecke PRIMARY KEY (start_flughafen_id, ziel_flughafen_id),
-    CONSTRAINT fk_flugstrecken_start_flughafen FOREIGN KEY (start_flughafen_id) REFERENCES flughafen (flughafen_id),
-    CONSTRAINT fk_flugstrecken_ziel_flughafen FOREIGN KEY (ziel_flughafen_id) REFERENCES flughafen (flughafen_id),
+    CONSTRAINT pk_flugstrecke PRIMARY KEY (start_flughafen_name, ziel_flughafen_name),
+    CONSTRAINT fk_flugstrecken_start_flughafen FOREIGN KEY (start_flughafen_name) REFERENCES flughafen (name),
+    CONSTRAINT fk_flugstrecken_ziel_flughafen FOREIGN KEY (ziel_flughafen_name) REFERENCES flughafen (name),
     CONSTRAINT fk_flugstrecken_fluggesellschaft FOREIGN KEY (fluggesellschaft_id) REFERENCES fluggesellschaften (id),
-    CONSTRAINT neq_start_ende_flugstrecke CHECK ( start_flughafen_id != ziel_flughafen_id )
+    CONSTRAINT neq_start_ende_flugstrecke CHECK ( start_flughafen_name != ziel_flughafen_name )
 );
 
 CREATE TABLE ferienwohnung_zusatsausstattung
