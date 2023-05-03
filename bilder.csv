@@ -1,0 +1,7 @@
+bildId,wohnId,beschreibung,pfad
+1,1,Aussenansicht,1_1.jpg
+2,1,Innenansicht,1_2.jpg
+3,2,Aussenansicht,2_1.jpg
+4,2,Innenansicht,2_2.jpg
+5,5,Garage,5-1.gif
+6,8,Dachterrsasse,8.jpg
