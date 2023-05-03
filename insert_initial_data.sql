@@ -12,22 +12,22 @@ INSERT INTO "LAND" (NAME, ISO_CODE) VALUES ('Frankreich', 'FR');
 INSERT INTO "LAND" (NAME, ISO_CODE) VALUES ('Spanien', 'ES');
 INSERT INTO "LAND" (NAME, ISO_CODE) VALUES ('Grönland', 'GL');
 
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (1, 'Konstanz', 'DE', 'Frankfurt');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) (2, 'Heidelberg','DE', 'Frankfurt');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (3, 'Stuttgart', 'DE', 'Frankfurt');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (4, 'Rust', 'DE', 'Frankfurt');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (5, 'Bern', 'CH', 'Zürich' );
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (6, 'Zürich', 'CH', 'Zürich');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (7, 'Chur', 'CH', 'Zürich' );
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (8, 'Flims-Laax', 'CH', 'Zürich');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (9, 'Öludeniz', 'TR', 'Istanbul');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (10, 'Antalya', 'TR', 'Istanbul');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (11, 'Bordeaux', 'FR', 'Paris');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (12, 'Paris', 'FR', 'Paris');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (13, 'Disneyland', 'FR', 'Paris');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (14, 'Barcelona', 'ES', 'Barcelona');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (15, 'Frankfurt', 'DE', 'Frankfurt');
-INSERT INTO "ORT"(ort_id, ortsname, land_id, naechsten_flughafen_id) VALUES (16, 'Istanbul', 'TR', 'Istanbul');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (1, 'Konstanz', 'DE');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (2, 'Stuttgart', 'DE');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (3, 'Heidelberg','DE');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (4, 'Rust', 'DE');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (5, 'Bern', 'CH');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (6, 'Zürich', 'CH');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (7, 'Chur', 'CH');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (8, 'Flims-Laax', 'CH');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (9, 'Öludeniz', 'TR');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (10, 'Antalya', 'TR');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (11, 'Bordeaux', 'FR');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (12, 'Paris', 'FR');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (13, 'Disneyland', 'FR');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (14, 'Barcelona', 'ES');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (15, 'Frankfurt', 'DE');
+INSERT INTO "ORT"(ORT_ID, ortsname, ISO_CODE) VALUES (16, 'Istanbul', 'TR');
 
     
 /*Adressen von Kunden*/
