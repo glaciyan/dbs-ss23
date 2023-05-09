@@ -15,7 +15,7 @@ CREATE TABLE ort
     ort_id                  NUMBER,
 	ortsname				VARCHAR2(255) NOT NULL,
     iso_code                	VARCHAR2(2) NOT NULL,
-    naechsten_flughafen 	VARCHAR2(255),
+    naechsten_flughafen 	VARCHAR2(255) NOT NULL,
     CONSTRAINT fk_org_land FOREIGN KEY (iso_code) REFERENCES land (iso_code),
     CONSTRAINT pk_ort PRIMARY KEY (ort_id)
 );
@@ -55,7 +55,7 @@ ALTER TABLE flughafen
     ADD CONSTRAINT fk_flughafen_adresse FOREIGN KEY (adresse_id) REFERENCES adresse (adresse_id);
 
 ALTER TABLE ort
-    ADD CONSTRAINT fk_ort_flughafen FOREIGN KEY (naechsten_flughafen) REFERENCES flughafen (name);
+    ADD CONSTRAINT fk_ort_flughafen FOREIGN KEY (naechsten_flughafen) REFERENCES flughafen (name) deferrable initially deferred;
 
 CREATE TABLE kunde
 (
