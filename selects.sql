@@ -2,7 +2,6 @@
 SELECT *
 FROM BELEGUNG
 WHERE FERIENWOHNUNG_ID = ?;
--- z.b. 5
 
 -- Welche Personen haben eine gegebene Ferienwohnung reserviert? Personen, die diese Ferienwohnung
 -- mehrmals reserviert haben, sollen dabei nur einmal ausgegeben werden.
@@ -16,7 +15,7 @@ WHERE FERIENWOHNUNG_ID = ?
 SELECT COUNT(*)
 FROM BELEGUNG
 WHERE KUNDE_ID = ?
-  AND STATUS_FLAG = 'reservierung';
+  AND STATUS_FLAG = 'buchung';
 
 -- Wie viele Buchungen haben Personen mit einem gegebenen Nachnamen getätigt? Dabei sollen nur Per-
 -- sonen ausgegeben werden, die mindestens eine Buchung getätigt haben. Beachten Sie weiterhin, dass es
@@ -24,4 +23,4 @@ WHERE KUNDE_ID = ?
 SELECT DISTINCT K.VORNAME, K.NAME, (SELECT COUNT(*) FROM BELEGUNG WHERE K.KUNDENNUMMER = BELEGUNG.KUNDE_ID)
 FROM BELEGUNG
          INNER JOIN KUNDE K on K.KUNDENNUMMER = BELEGUNG.KUNDE_ID
-WHERE K.NAME = ?;
+WHERE K.NAME = ? AND STATUS_FLAG = 'buchung';
