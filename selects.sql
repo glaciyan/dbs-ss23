@@ -36,6 +36,7 @@ FROM ADRESSEENTFERNUNG
          INNER JOIN TOURISTENATTRAKTION T on A3.ADRESSE_ID = T.ADRESSE_ID
          INNER JOIN ORT TORT on A2.ORT_ID = TORT.ORT_ID
 WHERE TORT.ISO_CODE = 'FR'
+  AND T.NAME = 'Disneyland'
   AND ENTFERNUNG_KM <= 100;
 
 -- 6) Welche Ferienwohnungen mit Schwimmbad in Frankreich haben mindestens eine Reservierung bzw.
