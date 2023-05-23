@@ -12,7 +12,7 @@ WHERE FERIENWOHNUNG_ID = ?
   AND BELEGUNG.STATUS_FLAG = 'reservierung';
 
 -- 3) Wie viele Buchungen hat eine Person mit einer gegebenen Kundenummer getätigt?
-SELECT COUNT(*)
+SELECT COUNT(*) as Buchungen
 FROM BELEGUNG
 WHERE KUNDE_ID = ?
   AND STATUS_FLAG = 'buchung';
@@ -20,7 +20,9 @@ WHERE KUNDE_ID = ?
 -- 4) Wie viele Buchungen haben Personen mit einem gegebenen Nachnamen getätigt? Dabei sollen nur Per-
 -- sonen ausgegeben werden, die mindestens eine Buchung getätigt haben. Beachten Sie weiterhin, dass es
 -- mehrere Personen mit dem gleichem Nachnamen geben kann.
-SELECT DISTINCT K.VORNAME, K.NAME, (SELECT COUNT(*) FROM BELEGUNG WHERE K.KUNDENNUMMER = BELEGUNG.KUNDE_ID)
+SELECT DISTINCT K.VORNAME,
+                K.NAME,
+                (SELECT COUNT(*) FROM BELEGUNG WHERE K.KUNDENNUMMER = BELEGUNG.KUNDE_ID) as Anzahl
 FROM BELEGUNG
          INNER JOIN KUNDE K on K.KUNDENNUMMER = BELEGUNG.KUNDE_ID
 WHERE K.NAME = ?
@@ -28,7 +30,7 @@ WHERE K.NAME = ?
 
 -- 5) Welche Ferienwohnungen in Frankreich sind höchstens 100 km von (dem Ort) der Touristenattraktion
 -- Disneyland entfernt?
-SELECT F.*, T.NAME, ENTFERNUNG_KM
+SELECT F.WOHNUNGSNUMMER, T.NAME, ENTFERNUNG_KM
 FROM ADRESSEENTFERNUNG
          INNER JOIN ADRESSE A2 on A2.ADRESSE_ID = START_ADRESSE
          INNER JOIN ADRESSE A3 on A3.ADRESSE_ID = ZIEL_ADRESSE
@@ -96,8 +98,13 @@ FROM FERIENWOHNUNG
          LEFT JOIN BELEGUNG B on FERIENWOHNUNG.WOHNUNGSNUMMER = B.FERIENWOHNUNG_ID
 WHERE O.ISO_CODE = 'FR'
   AND Z.NAME = 'Schwimmbad'
-  AND (B.BELEBUNGSNUMMER IS NULL
-    OR B.STATUS_FLAG != 'reservierung');
+  AND WOHNUNGSNUMMER NOT IN (SELECT WOHNUNGSNUMMER
+                             FROM BELEGUNG BL,
+                                  FERIENWOHNUNG F
+                             WHERE F.WOHNUNGSNUMMER = BL.FERIENWOHNUNG_ID
+                               AND B.STATUS_FLAG = 'reservierung');
+--   AND (B.BELEBUNGSNUMMER IS NULL
+--     OR B.STATUS_FLAG != 'reservierung');
 
 -- 7b) Ferienwohnungen mit Schwimmbad in Frankreich ohne Buchung:
 SELECT DISTINCT FERIENWOHNUNG.*
@@ -109,8 +116,11 @@ FROM FERIENWOHNUNG
          LEFT JOIN BELEGUNG B on FERIENWOHNUNG.WOHNUNGSNUMMER = B.FERIENWOHNUNG_ID
 WHERE O.ISO_CODE = 'FR'
   AND Z.NAME = 'Schwimmbad'
-  AND (B.BELEBUNGSNUMMER IS NULL
-    OR B.STATUS_FLAG != 'buchung');
+  AND WOHNUNGSNUMMER NOT IN (SELECT WOHNUNGSNUMMER
+                             FROM BELEGUNG BL,
+                                  FERIENWOHNUNG F
+                             WHERE F.WOHNUNGSNUMMER = BL.FERIENWOHNUNG_ID
+                               AND BL.STATUS_FLAG = 'buchung');
 
 -- 7c) Ferienwohnungen mit Schwimmbad in Frankreich ohne Belegung:
 SELECT DISTINCT FERIENWOHNUNG.*
@@ -122,9 +132,10 @@ FROM FERIENWOHNUNG
          LEFT JOIN BELEGUNG B on FERIENWOHNUNG.WOHNUNGSNUMMER = B.FERIENWOHNUNG_ID
 WHERE O.ISO_CODE = 'FR'
   AND Z.NAME = 'Schwimmbad'
-  AND B.BELEBUNGSNUMMER IS NULL;
-
-
+  AND WOHNUNGSNUMMER NOT IN (SELECT WOHNUNGSNUMMER
+                             FROM BELEGUNG BL,
+                                  FERIENWOHNUNG F
+                             WHERE F.WOHNUNGSNUMMER = BL.FERIENWOHNUNG_ID);
 
 -- 8) Welche Ferienwohnungen mit Schwimmbad sind in der Türkei in der Zeit vom 01.05.2016 - 21.05.2016
 -- bereits belegt (d.h. gebucht oder reserviert)?
@@ -170,7 +181,9 @@ GROUP BY LAND.NAME;
 
 -- 11. Wie viele Reservierungen und Buchungen gibt es für die einzelnen Ferienwohnungen? (1 Anfrage; bitte
 -- auch Ferienwohnungen ausgeben, die keine Reservierungen / Buchungen haben)
-SELECT FERIENWOHNUNG.WOHNUNGSNUMMER, COUNT(B.BELEBUNGSNUMMER)
+SELECT FERIENWOHNUNG.WOHNUNGSNUMMER,
+       SUM(CASE WHEN B.STATUS_FLAG = 'reservierung' THEN 1 ELSE 0 END) AS Reversierungen,
+       SUM(CASE WHEN B.STATUS_FLAG = 'buchung' THEN 1 ELSE 0 END)      AS Buchungen
 FROM FERIENWOHNUNG
          LEFT JOIN BELEGUNG B on FERIENWOHNUNG.WOHNUNGSNUMMER = B.FERIENWOHNUNG_ID
 GROUP BY FERIENWOHNUNG.WOHNUNGSNUMMER;
@@ -221,5 +234,5 @@ FROM FERIENWOHNUNG
 WHERE WOHNUNGSNUMMER = ?
   AND AUSO.ISO_CODE != O.ISO_CODE
 ORDER BY SERVICEQUALITAET DESC
-FETCH FIRST ROW ONLY;
+    FETCH FIRST ROW ONLY;
 
